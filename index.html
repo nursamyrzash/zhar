@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="Zharyq Online — Ерекше балалар үшін қолдау платформасы">
+<title>Zharyq Online 🌿</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css">
+<script src="https://api-maps.yandex.ru/2.1/?apikey=d960d7d4-df9d-4e47-80c8-e5a4ac3eb426&lang=ru_RU" type="text/javascript"></script>
+<style>
+/* ══════════════════════════════
+   ZHARYK ONLINE — EXTERNAL HEADER
+   ══════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;}
+
+/* ── TOP BAR ── */
+#zh-topbar{
+  background:#c09060;
+  color:#fff;
+  font-size:13px;
+  font-family:'Inter',sans-serif;
+  position:relative;z-index:2000;
+}
+#zh-topbar-inner{
+  max-width:1200px;margin:0 auto;padding:0 24px;
+  display:flex;align-items:center;justify-content:space-between;
+  height:38px;
+}
+.zh-lang-list{display:flex;list-style:none;gap:0;align-items:center;}
+.zh-lang-list li+li::before{content:'|';color:rgba(255,255,255,.4);margin:0 7px;}
+.zh-lang-btn{
+  background:none;border:none;cursor:pointer;
+  color:rgba(255,255,255,.72);font-size:13px;font-weight:600;
+  font-family:'Inter',sans-serif;padding:0;transition:color .18s;
+}
+.zh-lang-btn.active{color:#fff;font-weight:800;}
+.zh-lang-btn:hover{color:#fff;}
+
+.zh-tb-right{display:flex;align-items:center;gap:12px;}
+#zh-user-pill{
+  display:none;align-items:center;gap:7px;
+  background:rgba(255,255,255,.12);border-radius:50px;
+  padding:3px 12px 3px 5px;cursor:pointer;transition:background .18s;
+}
+#zh-user-pill:hover{background:rgba(255,255,255,.22);}
+#zh-user-avatar{
+  width:26px;height:26px;border-radius:50%;
+  background:rgba(255,255,255,.28);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;
+}
+#zh-user-name{font-size:13px;font-weight:700;color:#fff;}
+
+.zh-tb-btn{
+  background:transparent;border:1.5px solid rgba(255,255,255,.55);
+  color:#fff;padding:4px 16px;border-radius:4px;
+  font-size:13px;font-weight:700;cursor:pointer;
+  font-family:'Inter',sans-serif;transition:all .18s;
+}
+.zh-tb-btn:hover{background:rgba(255,255,255,.13);border-color:#fff;}
+#zh-logout-btn{display:none;}
+
+/* ── MAIN HEADER ── */
+#zh-mainheader{
+  background:#fff;
+  box-shadow:0 2px 10px rgba(184,144,90,.1);
+  position:sticky;top:0;z-index:1900;
+  font-family:'Inter',sans-serif;
+}
+#zh-mainheader-inner{
+  max-width:1200px;margin:0 auto;padding:0 24px;
+  display:flex;align-items:center;height:68px;gap:32px;
+}
+.zh-logo{
+  text-decoration:none;display:flex;align-items:center;gap:10px;flex-shrink:0;
+  cursor:pointer;
+}
+.zh-logo-icon{
+  width:44px;height:44px;border-radius:10px;
+  background:transparent;
+  display:flex;align-items:center;justify-content:center;
+}
+.zh-logo-icon svg{width:22px;height:22px;fill:#fff;}
+.zh-logo-text{font-size:19px;font-weight:900;color:#b8905a;line-height:1.1;letter-spacing:-.3px;}
+.zh-logo-text span{color:#e8a020;}
+
+/* ── NAV ── */
+#zh-nav{flex:1;overflow:visible;}
+.zh-nav-list{list-style:none;display:flex;align-items:center;padding:0;margin:0;}
+.zh-nav-list>li{position:relative;}
+.zh-nav-list>li>a,.zh-nav-list>li>span{
+  display:flex;align-items:center;gap:4px;
+  padding:0 13px;height:68px;
+  color:#2c1e0e;text-decoration:none;
+  font-size:13.5px;font-weight:700;white-space:nowrap;
+  border-bottom:3px solid transparent;
+  transition:color .18s,border-color .18s;cursor:pointer;
+  user-select:none;
+}
+.zh-nav-list>li>a:hover,.zh-nav-list>li:hover>a,
+.zh-nav-list>li>span:hover,.zh-nav-list>li:hover>span{
+  color:#b8905a;border-bottom-color:#b8905a;
+}
+.zh-arrow{
+  width:9px;height:9px;flex-shrink:0;opacity:.6;
+  transition:transform .22s;
+}
+.zh-nav-list>li:hover .zh-arrow{transform:rotate(180deg);}
+
+/* ── DROPDOWN ── */
+.zh-dropdown{
+  position:absolute;top:100%;left:0;
+  background:#fff;min-width:220px;
+  border-top:3px solid #b8905a;border-radius:0 0 8px 8px;
+  box-shadow:0 8px 28px rgba(184,144,90,.16);
+  list-style:none;padding:6px 0;
+  opacity:0;visibility:hidden;pointer-events:none;
+  transform:translateY(10px);
+  transition:opacity .2s ease,transform .2s ease,visibility .2s;
+  z-index:3000;
+}
+.zh-nav-list>li:hover>.zh-dropdown{
+  opacity:1;visibility:visible;pointer-events:all;transform:translateY(0);
+}
+.zh-dropdown li a{
+  display:block;padding:9px 18px;
+  color:#3c2810;text-decoration:none;
+  font-size:13.5px;font-weight:500;
+  border-left:3px solid transparent;
+  transition:background .13s,color .13s,padding-left .13s;
+}
+.zh-dropdown li a:hover{
+  background:#faf3ea;color:#b8905a;
+  padding-left:24px;border-left-color:#b8905a;
+}
+.zh-dropdown li+li{border-top:1px solid #f5ead8;}
+
+/* Give root breathing room below header */
+#root{min-height:calc(100vh - 106px);}
+
+/* Static about pages rendered into root */
+.zh-static-page{
+  max-width:900px;margin:48px auto;padding:0 24px;
+  animation:fadeIn .35s ease;
+}
+@keyframes fadeIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.zh-static-page h2{
+  font-family:'Inter',sans-serif;font-size:26px;font-weight:900;
+  color:var(--g1);margin-bottom:16px;
+}
+.zh-static-page .zh-back{
+  margin-top:22px;padding:9px 22px;border-radius:50px;
+  border:2px solid var(--g1);background:transparent;color:var(--g1);
+  font-size:13px;font-weight:700;cursor:pointer;
+  font-family:'Inter',sans-serif;transition:all .2s;display:inline-block;
+}
+.zh-static-page .zh-back:hover{background:var(--g4);}
+
+/* Mobile: collapse nav for small screens */
+@media(max-width:900px){
+  .zh-nav-list>li>a,.zh-nav-list>li>span{padding:0 8px;font-size:12px;}
+}
+@media(max-width:700px){
+  #zh-nav{display:none;}
+}
+
+/* ══════════════════════════════
+   КНОПКА СЛАБОВИДЯЩИХ — TOPBAR
+   ══════════════════════════════ */
+#zh-access-btn {
+  background: transparent;
+  border: 1.5px solid rgba(255,255,255,.55);
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 24px;
+  padding: 0;
+  transition: background .18s, border-color .18s;
+  flex-shrink: 0;
+}
+#zh-access-btn:hover {
+  background: rgba(255,255,255,.15);
+  border-color: #fff;
+}
+#zh-access-btn.active {
+  background: #ffe000;
+  border-color: #ffe000;
+  color: #000;
+}
+#zh-access-btn svg {
+  width: 15px;
+  height: 15px;
+  fill: currentColor;
+  pointer-events: none;
+}
+
+/* ══════════════════════════════
+   РЕЖИМ ДЛЯ СЛАБОВИДЯЩИХ
+   ══════════════════════════════ */
+body.accessibility-mode,
+body.accessibility-mode *:not(script):not(style):not(iframe) {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border-color: #000000 !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+body.accessibility-mode {
+  font-size: 20px !important;
+  line-height: 1.75 !important;
+}
+body.accessibility-mode h1 { font-size: 2em !important; }
+body.accessibility-mode h2 { font-size: 1.75em !important; }
+body.accessibility-mode h3 { font-size: 1.5em !important; }
+body.accessibility-mode p,
+body.accessibility-mode li,
+body.accessibility-mode span,
+body.accessibility-mode td,
+body.accessibility-mode label { font-size: 1em !important; }
+body.accessibility-mode a {
+  color: #0000cc !important;
+  text-decoration: underline !important;
+}
+body.accessibility-mode img {
+  filter: contrast(1.15) !important;
+  outline: 2px solid #000 !important;
+}
+body.accessibility-mode input,
+body.accessibility-mode textarea,
+body.accessibility-mode select {
+  background: #fff !important;
+  color: #000 !important;
+  border: 2px solid #000 !important;
+  font-size: 1em !important;
+}
+body.accessibility-mode button:not(#zh-access-btn) {
+  background: #000 !important;
+  color: #fff !important;
+  border: 2px solid #000 !important;
+  font-size: 1em !important;
+}
+body.accessibility-mode #zh-access-btn {
+  background: #ffe000 !important;
+  color: #000 !important;
+  border-color: #000 !important;
+}
+/* Скрыть фоновые декоративные градиенты */
+body.accessibility-mode [style*="gradient"] {
+  background-image: none !important;
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════
+     ZHARYK ONLINE — PERSISTENT HEADER
+     ══════════════════════════════════ -->
+
+<!-- TOP BAR -->
+<div id="zh-topbar">
+  <div id="zh-topbar-inner">
+    <!-- Language switcher -->
+    <ul class="zh-lang-list">
+      <li><button class="zh-lang-btn active" data-lang="kk" onclick="zhSetLang('kk')">Қаз</button></li>
+      <li><button class="zh-lang-btn" data-lang="ru" onclick="zhSetLang('ru')">Рус</button></li>
+      <li><button class="zh-lang-btn" data-lang="en" onclick="zhSetLang('en')">Eng</button></li>
+      <li style="margin-left:10px;">
+        <button id="zh-access-btn" aria-pressed="false" title="Режим для слабовидящих + озвучка">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5C21.27 7.61 17 4.5 12 4.5zm0 12.5a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
+          </svg>
+        </button>
+      </li>
+    </ul>
+    <!-- Auth area -->
+    <div class="zh-tb-right">
+      <div id="zh-user-pill" onclick="zhOpenProfile()">
+        <div id="zh-user-avatar">?</div>
+        <span id="zh-user-name"></span>
+      </div>
+      <button id="zh-login-btn" class="zh-tb-btn" onclick="renderAuth()">Кіру</button>
+      <button id="zh-logout-btn" class="zh-tb-btn" onclick="zhLogout()">Шығу / Выйти</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN HEADER + NAV -->
+<header id="zh-mainheader">
+  <div id="zh-mainheader-inner">
+    <!-- Logo -->
+    <a class="zh-logo" onclick="zhBackToDashboard()">
+      <div class="zh-logo-icon" style="background:none;border-radius:10px;overflow:hidden;width:44px;height:44px;"><img src="data:image/png;base64,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" style="width:100%;height:100%;object-fit:contain;" alt="logo"></div>
+      <div class="zh-logo-text">Zharyq<br><span>Online</span></div>
+    </a>
+
+    <!-- Navigation -->
+    <nav id="zh-nav">
+      <ul class="zh-nav-list">
+
+        <!-- О НАС / БІЗДІҢ ТУРАЛЫ / ABOUT -->
+        <li>
+          <span>
+            <span data-zh-i18n="about">Біз туралы</span>
+            <svg class="zh-arrow" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 1l4 4 4-4"/></svg>
+          </span>
+          <ul class="zh-dropdown">
+            <li><a onclick="zhStaticPage('mission')"><span data-zh-i18n="mission">Миссия</span></a></li>
+            <li><a onclick="zhStaticPage('goal')"><span data-zh-i18n="goal">Мақсат</span></a></li>
+            <li><a onclick="zhStaticPage('history')"><span data-zh-i18n="history">Тарих</span></a></li>
+            <li><a onclick="zhStaticPage('team')"><span data-zh-i18n="team">Команда</span></a></li>
+          </ul>
+        </li>
+
+        <!-- ДОСТАР / ДРУЗЬЯ / FRIENDS -->
+        <li>
+          <a onclick="zhStaticPage('friends')"><span data-zh-i18n="friends">Достар</span></a>
+        </li>
+
+        <!-- ЖАҢАЛЫҚТАР / НОВОСТИ / NEWS -->
+        <li>
+          <a onclick="zhStaticPage('news')"><span data-zh-i18n="news">Жаңалықтар</span></a>
+        </li>
+
+        <!-- МЕМЛЕКЕТТІК КӨМЕК / ГОС. ПОМОЩЬ / GOV. AID -->
+        <li>
+          <span>
+            <span data-zh-i18n="govAid">Мемлекеттік көмек</span>
+            <svg class="zh-arrow" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 1l4 4 4-4"/></svg>
+          </span>
+          <ul class="zh-dropdown">
+            <li><a onclick="zhShowGovSection('general')"><span data-zh-i18n="govBenefits">💰 Жеңілдіктер мен құқықтар</span></a></li>
+          </ul>
+        </li>
+
+        <!-- ОҢАЛТУ / РЕАБИЛИТАЦИЯ / REHABILITATION -->
+        <li>
+          <span>
+            <span data-zh-i18n="rehab">Оңалту</span>
+            <svg class="zh-arrow" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 1l4 4 4-4"/></svg>
+          </span>
+          <ul class="zh-dropdown">
+            <li><a onclick="zhNavKazakhstan()"><span data-zh-i18n="rehabKz">🇰🇿 Қазақстан</span></a></li>
+            <li><a onclick="zhSwitchTab('clinics_all','abroad')"><span data-zh-i18n="rehabAbroad">🌍 Шетелдегі</span></a></li>
+          </ul>
+        </li>
+
+        <!-- РӘСІМДЕУ / ОФОРМЛЕНИЕ / REGISTRATION -->
+        <li>
+          <a onclick="zhSwitchTab('plan')"><span data-zh-i18n="registration">Рәсімдеу</span></a>
+        </li>
+
+        <!-- ЗАҢ / ЗАКОН / LAW -->
+        <li>
+          <a onclick="zhSwitchTab('law')"><span data-zh-i18n="law">⚖️ Заң</span></a>
+        </li>
+
+        <!-- ҚОЛДАНБАЛАР / ПРИЛОЖЕНИЯ / APPS -->
+        <li>
+          <span>
+            <span data-zh-i18n="apps">Қолданбалар</span>
+            <svg class="zh-arrow" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 1l4 4 4-4"/></svg>
+          </span>
+          <ul class="zh-dropdown">
+            <li><a onclick="zhSwitchTab('games')"><span data-zh-i18n="appsByDiag">📱 Диагнозы бойынша</span></a></li>
+            <li><a onclick="zhSwitchTab('charity')"><span data-zh-i18n="charity">❤️ Қайырымдылық</span></a></li>
+          </ul>
+        </li>
+
+        <!-- МАҚАЛАЛАР / СТАТЬИ / ARTICLES -->
+        <li>
+          <a onclick="zhSwitchTab('inspire')"><span data-zh-i18n="articles">Мақалалар</span></a>
+        </li>
+
+        <!-- AI ЧАТ -->
+        <li>
+          <a onclick="zhSwitchTab('ai')"><span data-zh-i18n="aiChat">🤖 AI Чат</span></a>
+        </li>
+
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<!-- ══ APP ROOT ══ -->
+<div id="root"></div>
+<div class="toast hidden" id="toast"></div>
+
+<!-- ══ SCRIPTS ══ -->
+<script>
+  // Guard stubs — replaced by patch.js real implementations after load
+  ["zhStaticPage","zhSwitchTab","zhBackToDashboard","zhSetLang","zhLogout","zhOpenProfile",
+   "zhNavKazakhstan","zhShowGovSection","zhShowKazakhstanMap","zhShowRegionClinics"]
+    .forEach(function(fn){
+      if(!window[fn]) window[fn] = function(){ console.warn(fn + " called before patch.js loaded"); };
+    });
+</script>
+<script src="./translations.js"></script>
+<script src="./kazakhstan-map.js"></script>
+<script src="./support-data.js"></script>
+<script src="./clinics-data-1.js"></script>
+<script src="./clinics-data-2.js"></script>
+<script src="./clinics-data-3.js"></script>
+<script src="./clinics-data-4.js"></script>
+<script src="./clinics-data-5.js"></script>
+<script src="./patch.js"></script>
+<script src="./home-page.js"></script>
+<script src="./app.js"></script>
+<script src="./accessibility.js"></script>
+</body>
+</html>
